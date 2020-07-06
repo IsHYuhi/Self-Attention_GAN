@@ -66,7 +66,7 @@ def train_model(G, D, dataloader, num_epochs, save_model_name='model'):
     #criterion = nn.BCEWithLogitsLoss(reduction='mean')
 
     z_dim = 20
-    mini_batch_size = 256
+    mini_batch_size = 64
 
     G.to(device)
     D.to(device)
@@ -154,7 +154,7 @@ def train_model(G, D, dataloader, num_epochs, save_model_name='model'):
             #g_loss = criterion(d_out_fake.view(-1), label_real)
 
             #hinge loss
-            g_loss = d_out_fake.mean()
+            g_loss = - d_out_fake.mean()
 
 
             g_optimizer.zero_grad()
@@ -178,8 +178,8 @@ def train_model(G, D, dataloader, num_epochs, save_model_name='model'):
         plot_log(losses, save_model_name)
 
         if(epoch%10 == 0):
-            torch.save(G.state_dict(), 'checkpoints/G_'+save_model_name+'_'+str(epoch+1)+'.pth')
-            torch.save(D.state_dict(), 'checkpoints/D_'+save_model_name+'_'+str(epoch+1)+'.pth')
+            torch.save(G.state_dict(), 'checkpoints/G_'+save_model_name+'_'+str(epoch)+'.pth')
+            torch.save(D.state_dict(), 'checkpoints/D_'+save_model_name+'_'+str(epoch)+'.pth')
 
     return G, D
 
@@ -194,7 +194,7 @@ def main():
     std = (0.5,)
     train_dataset = GAN_Img_Dataset(file_list=train_img_list, transform=ImageTransform(mean, std))
 
-    batch_size = 256
+    batch_size = 64
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
     num_epochs = 100

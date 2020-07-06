@@ -25,10 +25,10 @@ G = Generator(z_dim=20, image_size=64)
 D = Discriminator(z_dim=20, image_size=64)
 
 '''-------load weights-------'''
-G_load_weights = torch.load('./checkpoints/G_DCGAN_100.pth')
+G_load_weights = torch.load('./checkpoints/G_SAGAN_10.pth')
 G.load_state_dict(fix_model_state_dict(G_load_weights))
 
-D_load_weights = torch.load('./checkpoints/D_DCGAN_100.pth')
+D_load_weights = torch.load('./checkpoints/D_SAGAN_10.pth')
 D.load_state_dict(fix_model_state_dict(D_load_weights))
 
 G.to(device)
@@ -46,7 +46,7 @@ z_dim = 20
 fixed_z = torch.randn(batch_size, z_dim)
 fixed_z = fixed_z.view(fixed_z.size(0), fixed_z.size(1), 1, 1)
 
-fake_images = G(fixed_z.to(device))
+fake_images, am1, am2 = G(fixed_z.to(device))
 
 train_img_list = make_datapath_list(num=1000)
 mean = (0.5,)
@@ -76,11 +76,11 @@ fig = plt.figure(figsize=(15, 6))
 for i in range(0,5):
     #train is upside
     plt.subplot(2, 5, i+1)
-    plt.imshow(images[i][0].cpu().detach().numpy(), 'gray')
+    plt.imshow(fake_images[i][0].cpu().detach().numpy(), 'gray')
 
     # generated is bottom
     plt.subplot(2, 5, 5+i+1)
-    am = am[i].view(16, 16, 16, 16)
+    am = am1[i].view(16, 16, 16, 16)
     am = am[7][7]##center
-    plt.imshow(am.cpu().detach().numpy())
+    plt.imshow(am.cpu().detach().numpy(), 'Blues')
 plt.show()
